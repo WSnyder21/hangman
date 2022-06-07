@@ -10,7 +10,7 @@ const figureParts = document.querySelectorAll('.figure-part');
 
 const randomWordUrl = 'https://random-word-api.herokuapp.com/word';
 
-const words = ['fucked'];
+const words = ['captain'];
 
 // Generate random word
 async function getRandomWord() {
