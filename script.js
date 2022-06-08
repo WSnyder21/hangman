@@ -10,28 +10,27 @@ const figureParts = document.querySelectorAll('.figure-part');
 
 const randomWordUrl = 'https://random-word-api.herokuapp.com/word';
 
-const words = ['captain'];
-
-// Generate random word
-async function getRandomWord() {
-    const response = await fetch(randomWordUrl);
-    const word = await response.json();
-    const newWord = word[0];
-    words.push(newWord);
-    console.log(words);
-};
-
-getRandomWord();
-
-
-let selectedWord = words[0];
+let selectedWord;
 
 let playable = true;
 
 const correctLetters = [];
 const wrongLetters = [];
 
+// Generate random word
+async function getRandomWord() {
+    try {
+        const response = await fetch(randomWordUrl);
+        const word = await response.json();
+        const newWord = word[0];
+        selectedWord = newWord;
 
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+getRandomWord();
 
 // Show hidden word
 function displayWord() {
@@ -59,6 +58,8 @@ function displayWord() {
     }
 }
 
+
+
 // Update the wrong letters
 function updateWrongLettersEl() {
     // Display wrong letters
@@ -81,7 +82,6 @@ function updateWrongLettersEl() {
     // Check if lost
     if (wrongLetters.length === figureParts.length) {
         finalMessage.innerText = 'Unfortunately you lost. 😕';
-        finalMessageRevealWord.innerText = `...the word was: ${selectedWord}`;
         popup.style.display = 'flex';
 
         playable = false;
@@ -125,20 +125,25 @@ window.addEventListener('keydown', e => {
 });
 
 // Restart game and play again
-playAgainBtn.addEventListener('click', () => {
-    playable = true;
+playAgainBtn.addEventListener('click', async () => {
 
     //  Empty arrays
     correctLetters.splice(0);
     wrongLetters.splice(0);
 
-    selectedWord = words[Math.floor(Math.random() * words.length)];
-
-    displayWord();
-
     updateWrongLettersEl();
 
     popup.style.display = 'none';
+
+    await init();
+
+    playable = true;
+
 });
 
-displayWord();
+async function init() {
+    await getRandomWord();
+    displayWord();
+}
+
+init();
